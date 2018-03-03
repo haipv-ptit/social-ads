@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="native_ad_icon_size">25dp</dimen>
+    <dimen name="native_ad_media_height">60dp</dimen>
+    <dimen name="native_ad_call_to_action_width">60dp</dimen>
+    <dimen name="native_ad_call_to_action_height">20dp</dimen>
+    <dimen name="native_ad_body_text">10sp</dimen>
+    <dimen name="native_ad_call_to_action_text">11sp</dimen>
+    <dimen name="native_ad_social_context_text">10sp</dimen>
+    <dimen name="native_ad_sponsored_label_text">10sp</dimen>
+    <dimen name="native_ad_body_sub_text">10sp</dimen>
+</resources>
