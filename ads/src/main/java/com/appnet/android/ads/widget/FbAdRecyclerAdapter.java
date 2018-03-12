@@ -22,8 +22,9 @@ import java.util.List;
 public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements NativeAdsManager.Listener {
     private static final int TYPE_FB_AD = 2000;
-    private static final int NEXT_FB_AD = 4;
+    private static final int NUMBER_FB_AD = 4;
     private NativeAdsManager mAdManager;
+    private boolean mAdVisibled = true;
 
     protected Context mContext;
     protected final List<T> mData;
@@ -31,14 +32,17 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public FbAdRecyclerAdapter(Context context, List<T> data, String unitId) {
         mContext = context;
         mData = data;
-        mAdManager = new NativeAdsManager(mContext, unitId, 4);
-        mAdManager.setListener(this);
+        init(unitId);
     }
 
     public FbAdRecyclerAdapter(Context context, String unitId) {
         mContext = context;
         mData = new ArrayList<>();
-        mAdManager = new NativeAdsManager(mContext, unitId, 4);
+        init(unitId);
+    }
+
+    private void init(String unitId) {
+        mAdManager = new NativeAdsManager(mContext, unitId, NUMBER_FB_AD);
         mAdManager.setListener(this);
     }
 
@@ -85,12 +89,14 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     @Override
     public void onAdsLoaded() {
+        mAdVisibled = true;
         notifyDataSetChanged();
     }
 
     @Override
     public void onAdError(AdError adError) {
-
+        mAdVisibled = false;
+        notifyDataSetChanged();
     }
 
     public T getItem(int position) {
@@ -100,7 +106,10 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         if (mData == null || mData.isEmpty() || isAdIndex(position)) {
             return null;
         }
-        int index = position - (position / NEXT_FB_AD);
+        if(!mAdVisibled) {
+            return mData.get(position);
+        }
+        int index = position - (position / NUMBER_FB_AD);
         return mData.get(index);
     }
 
@@ -121,9 +130,9 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     private boolean isAdIndex(int position) {
-        if (mData == null || mData.isEmpty() || mData.size() < NEXT_FB_AD) {
+        if (mData == null || mData.isEmpty() || !mAdVisibled || mData.size() < NUMBER_FB_AD ) {
             return false;
-        } else if (position % NEXT_FB_AD == NEXT_FB_AD - 1 && mData.size() >= NEXT_FB_AD) {
+        } else if (position % NUMBER_FB_AD == NUMBER_FB_AD - 1 && mData.size() >= NUMBER_FB_AD) {
             return true;
         }
         return false;
@@ -133,10 +142,10 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public int getItemCount() {
         if (mData == null || mData.isEmpty()) {
             return 0;
-        } else if (mData.size() < NEXT_FB_AD) {
+        } else if (!mAdVisibled || mData.size() < NUMBER_FB_AD) {
             return mData.size();
         } else {
-            return mData.size() + mData.size() / NEXT_FB_AD;
+            return mData.size() + mData.size() / NUMBER_FB_AD;
         }
     }
 
