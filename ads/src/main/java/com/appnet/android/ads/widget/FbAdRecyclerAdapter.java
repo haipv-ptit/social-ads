@@ -1,6 +1,7 @@
 package com.appnet.android.ads.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,27 +24,50 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         implements NativeAdsManager.Listener {
     private static final int TYPE_FB_AD = 2000;
     private static final int NUMBER_FB_AD = 4;
+    private static final int MAX_FB_ADS = 4;
     private NativeAdsManager mAdManager;
     private boolean mAdVisibled = true;
 
     protected Context mContext;
     protected final List<T> mData;
+    private int mAdSteps = NUMBER_FB_AD;
 
     public FbAdRecyclerAdapter(Context context, List<T> data, String unitId) {
         mContext = context;
         mData = data;
-        init(unitId);
+        init(unitId, MAX_FB_ADS);
     }
 
     public FbAdRecyclerAdapter(Context context, String unitId) {
         mContext = context;
         mData = new ArrayList<>();
-        init(unitId);
+        init(unitId, MAX_FB_ADS);
     }
 
-    private void init(String unitId) {
-        mAdManager = new NativeAdsManager(mContext, unitId, NUMBER_FB_AD);
+    public FbAdRecyclerAdapter(Context context, String unitId, int maxAds) {
+        mContext = context;
+        mData = new ArrayList<>();
+        init(unitId, maxAds);
+    }
+
+    private void init(String unitId, int maxAds) {
+        int mMaxFbAds;
+        if(maxAds > 10) {
+            mMaxFbAds = 10;
+        } else if (maxAds < 0) {
+            mMaxFbAds = 1;
+        } else {
+            mMaxFbAds = maxAds;
+        }
+        mAdManager = new NativeAdsManager(mContext, unitId, mMaxFbAds);
         mAdManager.setListener(this);
+    }
+
+    public void setStepAds(int stepFbAds) {
+         if (stepFbAds < 2) {
+            mAdSteps = 2;
+        }
+        mAdSteps = stepFbAds;
     }
 
     public void loadAd() {
@@ -60,8 +84,9 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     protected abstract int getViewType(int position);
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_FB_AD) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.fb_native_ad, parent, false);
             return new FbAdRecyclerViewHolder(view);
@@ -71,8 +96,9 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     protected abstract RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType);
 
+    @NonNull
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == TYPE_FB_AD) {
             if (mAdManager != null && mAdManager.isLoaded()) {
@@ -109,7 +135,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         if(!mAdVisibled) {
             return mData.get(position);
         }
-        int index = position - (position / NUMBER_FB_AD);
+        int index = position - (position / mAdSteps);
         return mData.get(index);
     }
 
@@ -130,9 +156,9 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     private boolean isAdIndex(int position) {
-        if (mData == null || mData.isEmpty() || !mAdVisibled || mData.size() < NUMBER_FB_AD ) {
+        if (mData == null || mData.isEmpty() || !mAdVisibled || mData.size() < mAdSteps ) {
             return false;
-        } else if (position % NUMBER_FB_AD == NUMBER_FB_AD - 1 && mData.size() >= NUMBER_FB_AD) {
+        } else if (position % mAdSteps == mAdSteps - 1 && mData.size() >= mAdSteps) {
             return true;
         }
         return false;
@@ -142,10 +168,10 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public int getItemCount() {
         if (mData == null || mData.isEmpty()) {
             return 0;
-        } else if (!mAdVisibled || mData.size() < NUMBER_FB_AD) {
+        } else if (!mAdVisibled || mData.size() < mAdSteps) {
             return mData.size();
         } else {
-            return mData.size() + mData.size() / NUMBER_FB_AD;
+            return mData.size() + mData.size() / mAdSteps;
         }
     }
 
@@ -160,27 +186,27 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     private static class FbAdRecyclerViewHolder extends RecyclerView.ViewHolder {
         private ImageView ImvNativeAdIcon;
         private TextView TvNativeAdTitle;
-        private TextView TvNativeAdSponsored;
+        //private TextView TvNativeAdSponsored;
         private MediaView MvNativeAdMedia;
         private TextView TvNativeAdSocialContext;
         private TextView TvNativeAdBody;
-        private TextView TvNativeAdBodySub;
+       //private TextView TvNativeAdBodySub;
         private View ViewNativeAdActionContainer;
         private Button BtnNativeAdCallToAction;
         private ViewGroup ViewAdChoicesContainer;
 
         FbAdRecyclerViewHolder(View view) {
             super(view);
-            ImvNativeAdIcon = (ImageView) itemView.findViewById(R.id.native_ad_icon);
-            TvNativeAdTitle = (TextView) itemView.findViewById(R.id.native_ad_title);
-            MvNativeAdMedia = (MediaView) itemView.findViewById(R.id.native_ad_media);
-            TvNativeAdSocialContext = (TextView) itemView.findViewById(R.id.native_ad_social_context);
-            TvNativeAdBody = (TextView) itemView.findViewById(R.id.native_ad_body);
-            TvNativeAdBodySub = (TextView) itemView.findViewById(R.id.native_ad_body_sub);
-            BtnNativeAdCallToAction = (Button) itemView.findViewById(R.id.native_ad_call_to_action);
+            ImvNativeAdIcon = itemView.findViewById(R.id.native_ad_icon);
+            TvNativeAdTitle = itemView.findViewById(R.id.native_ad_title);
+            MvNativeAdMedia = itemView.findViewById(R.id.native_ad_media);
+            TvNativeAdSocialContext = itemView.findViewById(R.id.native_ad_social_context);
+            TvNativeAdBody = itemView.findViewById(R.id.native_ad_body);
+            //TvNativeAdBodySub = itemView.findViewById(R.id.native_ad_body_sub);
+            BtnNativeAdCallToAction = itemView.findViewById(R.id.native_ad_call_to_action);
             ViewNativeAdActionContainer = itemView.findViewById(R.id.native_ad_action_container);
-            TvNativeAdSponsored = (TextView) itemView.findViewById(R.id.sponsored_label);
-            ViewAdChoicesContainer = (ViewGroup) itemView.findViewById(R.id.ad_choices_container);
+            //TvNativeAdSponsored = itemView.findViewById(R.id.sponsored_label);
+            ViewAdChoicesContainer = itemView.findViewById(R.id.ad_choices_container);
         }
 
         private void bindView(Context context, NativeAd ad) {
