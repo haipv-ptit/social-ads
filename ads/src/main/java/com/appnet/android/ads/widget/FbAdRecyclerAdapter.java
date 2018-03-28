@@ -132,7 +132,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         if (mData == null || mData.isEmpty() || isAdIndex(position)) {
             return null;
         }
-        if(!mAdVisibled) {
+        if(!mAdVisibled && position < mData.size()) {
             return mData.get(position);
         }
         int index = position - (position / mAdSteps);
