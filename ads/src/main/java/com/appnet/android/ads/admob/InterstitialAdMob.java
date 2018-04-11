@@ -31,17 +31,20 @@ public class InterstitialAdMob extends AbstractAdMob {
         mInterstitialAd.loadAd(getAdRequest());
     }
 
-    public void show() {
+    public boolean show() {
+        boolean isShow = false;
         if(mInterstitialAd.isLoaded()) {
             int times = getLaunchTimes();
             if(times >= MAX_LAUNCH_TIMES) {
                 times = 1;
+                isShow = true;
                 mInterstitialAd.show();
             } else {
                 times++;
             }
             registerLaunchTimes(times);
         }
+        return isShow;
     }
 
     private void registerLaunchTimes(int times) {
