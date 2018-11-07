@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appnet.android.ads.R;
 import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
+import com.facebook.ads.AdIconView;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.facebook.ads.NativeAdsManager;
@@ -54,8 +54,9 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         int mMaxFbAds;
         if(maxAds > 10) {
             mMaxFbAds = 10;
-        } else if (maxAds < 0) {
-            mMaxFbAds = 1;
+        } else if (maxAds <= 0) {
+            mMaxFbAds = 0;
+            mAdVisibled = false;
         } else {
             mMaxFbAds = maxAds;
         }
@@ -184,7 +185,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     private static class FbAdRecyclerViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ImvNativeAdIcon;
+        private AdIconView ImvNativeAdIcon;
         private TextView TvNativeAdTitle;
         //private TextView TvNativeAdSponsored;
         private MediaView MvNativeAdMedia;
