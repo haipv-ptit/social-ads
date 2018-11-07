@@ -213,29 +213,21 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
             if (ad != null) {
                 setVisible(true);
                 ad.unregisterView();
-                TvNativeAdTitle.setText(ad.getAdTitle());
+                TvNativeAdTitle.setText(ad.getAdvertiserName());
                 //  if (mIsActionContainer) {
                 TvNativeAdSocialContext.setText(ad.getAdSocialContext());
-                TvNativeAdBody.setText(ad.getAdBody());
+                TvNativeAdBody.setText(ad.getAdBodyText());
                 BtnNativeAdCallToAction.setText(ad.getAdCallToAction());
                 //  } else {
                 //      mViewHolder.TvNativeAdBodySub.setText(ad.getAdBody());
                 //  }
 
-                // Download and display the ad icon.
-                NativeAd.Image adIcon = ad.getAdIcon();
-                NativeAd.downloadAndDisplayImage(adIcon, ImvNativeAdIcon);
-
-                // Download and display the cover image.
-                // if (mIsMedia) {
-                MvNativeAdMedia.setNativeAd(ad);
-                // }
 
                 // Add the AdChoices icon
                 ViewAdChoicesContainer.removeAllViews();
                 AdChoicesView adChoicesView = new AdChoicesView(context, ad, true);
                 ViewAdChoicesContainer.addView(adChoicesView);
-                ad.registerViewForInteraction(itemView);
+                ad.registerViewForInteraction(itemView, MvNativeAdMedia, ImvNativeAdIcon);
             } else {
                 setVisible(false);
             }
