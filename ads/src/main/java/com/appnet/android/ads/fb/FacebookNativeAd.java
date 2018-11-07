@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,10 +13,12 @@ import com.facebook.ads.AbstractAdListener;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
+import com.facebook.ads.AdIconView;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
+import com.facebook.ads.NativeAdListener;
 
-public class FacebookNativeAd extends AbstractAdListener {
+public class FacebookNativeAd extends AbstractAdListener implements NativeAdListener {
     private Context mContext;
     private String mUnitId;
 
@@ -42,15 +43,15 @@ public class FacebookNativeAd extends AbstractAdListener {
     private void initFan() {
         mAdView = (ViewGroup) View.inflate(mContext, R.layout.fb_native_ad, null);
         mViewHolder = new FbAdViewHolder();
-        mViewHolder.ImvNativeAdIcon = (ImageView) mAdView.findViewById(R.id.native_ad_icon);
-        mViewHolder.TvNativeAdTitle = (TextView) mAdView.findViewById(R.id.native_ad_title);
-        mViewHolder.MvNativeAdMedia = (MediaView) mAdView.findViewById(R.id.native_ad_media);
-        mViewHolder.TvNativeAdSocialContext = (TextView) mAdView.findViewById(R.id.native_ad_social_context);
-        mViewHolder.TvNativeAdBody = (TextView) mAdView.findViewById(R.id.native_ad_body);
-        mViewHolder.TvNativeAdBodySub = (TextView) mAdView.findViewById(R.id.native_ad_body_sub);
-        mViewHolder.BtnNativeAdCallToAction = (Button) mAdView.findViewById(R.id.native_ad_call_to_action);
+        mViewHolder.ImvNativeAdIcon = mAdView.findViewById(R.id.native_ad_icon);
+        mViewHolder.TvNativeAdTitle = mAdView.findViewById(R.id.native_ad_title);
+        mViewHolder.MvNativeAdMedia = mAdView.findViewById(R.id.native_ad_media);
+        mViewHolder.TvNativeAdSocialContext = mAdView.findViewById(R.id.native_ad_social_context);
+        mViewHolder.TvNativeAdBody = mAdView.findViewById(R.id.native_ad_body);
+        mViewHolder.TvNativeAdBodySub = mAdView.findViewById(R.id.native_ad_body_sub);
+        mViewHolder.BtnNativeAdCallToAction = mAdView.findViewById(R.id.native_ad_call_to_action);
         mViewHolder.ViewNativeAdActionContainer = mAdView.findViewById(R.id.native_ad_action_container);
-        mViewHolder.TvNativeAdSponsored = (TextView) mAdView.findViewById(R.id.sponsored_label);
+        mViewHolder.TvNativeAdSponsored = mAdView.findViewById(R.id.sponsored_label);
         mNativeAd = new NativeAd(mContext, mUnitId);
         mNativeAd.setAdListener(this);
     }
@@ -114,39 +115,39 @@ public class FacebookNativeAd extends AbstractAdListener {
         if (mNativeAd == null) {
             return;
         }
+        inflateAd(ad);
+    }
+
+    private void inflateAd(Ad ad) {
         mRetry = 0;
         mNativeAd.unregisterView();
         // Set the Text.
-        mViewHolder.TvNativeAdTitle.setText(mNativeAd.getAdTitle());
+        mViewHolder.TvNativeAdTitle.setText(mNativeAd.getAdvertiserName());
         if (mIsActionContainer) {
             mViewHolder.TvNativeAdSocialContext.setText(mNativeAd.getAdSocialContext());
-            mViewHolder.TvNativeAdBody.setText(mNativeAd.getAdBody());
+            mViewHolder.TvNativeAdBody.setText(mNativeAd.getAdBodyText());
             mViewHolder.BtnNativeAdCallToAction.setText(mNativeAd.getAdCallToAction());
         } else {
-            mViewHolder.TvNativeAdBodySub.setText(mNativeAd.getAdBody());
-        }
-
-        // Download and display the ad icon.
-        NativeAd.Image adIcon = mNativeAd.getAdIcon();
-        NativeAd.downloadAndDisplayImage(adIcon, mViewHolder.ImvNativeAdIcon);
-
-        // Download and display the cover image.
-        if (mIsMedia) {
-            mViewHolder.MvNativeAdMedia.setNativeAd(mNativeAd);
+            mViewHolder.TvNativeAdBodySub.setText(mNativeAd.getAdBodyText());
         }
 
         // Add the AdChoices icon
-        LinearLayout adChoicesContainer = (LinearLayout) mAdView.findViewById(R.id.ad_choices_container);
+        LinearLayout adChoicesContainer = mAdView.findViewById(R.id.ad_choices_container);
         AdChoicesView adChoicesView = new AdChoicesView(mContext, mNativeAd, true);
         adChoicesContainer.addView(adChoicesView);
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
         }
-        mNativeAd.registerViewForInteraction(mAdView);
+        mNativeAd.registerViewForInteraction(mAdView,  mViewHolder.MvNativeAdMedia, mViewHolder.ImvNativeAdIcon);
+    }
+
+    @Override
+    public void onMediaDownloaded(Ad ad) {
+
     }
 
     private static class FbAdViewHolder {
-        ImageView ImvNativeAdIcon;
+        AdIconView ImvNativeAdIcon;
         TextView TvNativeAdTitle;
         TextView TvNativeAdSponsored;
         MediaView MvNativeAdMedia;
