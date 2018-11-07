@@ -27,6 +27,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     private static final int MAX_FB_ADS = 4;
     private NativeAdsManager mAdManager;
     private boolean mAdVisibled = true;
+    private boolean mIsActionVisible = false;
 
     protected Context mContext;
     protected final List<T> mData;
@@ -47,6 +48,13 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public FbAdRecyclerAdapter(Context context, String unitId, int maxAds) {
         mContext = context;
         mData = new ArrayList<>();
+        init(unitId, maxAds);
+    }
+
+    public FbAdRecyclerAdapter(Context context, String unitId, int maxAds, boolean isActionVisible) {
+        mContext = context;
+        mData = new ArrayList<>();
+        mIsActionVisible = isActionVisible;
         init(unitId, maxAds);
     }
 
@@ -196,8 +204,20 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         private Button BtnNativeAdCallToAction;
         private ViewGroup ViewAdChoicesContainer;
 
+        private boolean mIsActionVisible = false;
+
         FbAdRecyclerViewHolder(View view) {
             super(view);
+            init(view, false);
+        }
+
+        FbAdRecyclerViewHolder(View view, boolean isActionVisible) {
+            super(view);
+            init(view, isActionVisible);
+        }
+
+        private void init(View view, boolean isActionVisible) {
+            mIsActionVisible = isActionVisible;
             ImvNativeAdIcon = itemView.findViewById(R.id.native_ad_icon);
             TvNativeAdTitle = itemView.findViewById(R.id.native_ad_title);
             MvNativeAdMedia = itemView.findViewById(R.id.native_ad_media);
@@ -229,6 +249,11 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
                 AdChoicesView adChoicesView = new AdChoicesView(context, ad, true);
                 ViewAdChoicesContainer.addView(adChoicesView);
                 ad.registerViewForInteraction(itemView, MvNativeAdMedia, ImvNativeAdIcon);
+                if(mIsActionVisible) {
+                    ViewNativeAdActionContainer.setVisibility(View.VISIBLE);
+                } else {
+                    ViewNativeAdActionContainer.setVisibility(View.GONE);
+                }
             } else {
                 setVisible(false);
             }
