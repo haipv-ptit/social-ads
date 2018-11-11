@@ -4,7 +4,7 @@ import com.appnet.android.ads.OnAdLoadListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 
-abstract class AbstractAdMob extends AdListener {
+public abstract class AbstractAdMob extends AdListener {
     private AdRequest mAdRequest;
     private AdRequest.Builder mBuilder;
     protected OnAdLoadListener mOnAdLoadListener;
