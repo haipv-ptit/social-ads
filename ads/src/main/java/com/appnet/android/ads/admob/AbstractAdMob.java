@@ -6,13 +6,18 @@ import com.google.android.gms.ads.AdRequest;
 
 abstract class AbstractAdMob extends AdListener {
     private AdRequest mAdRequest;
+    private AdRequest.Builder mBuilder;
     protected OnAdLoadListener mOnAdLoadListener;
 
     AbstractAdMob() {
-        mAdRequest = new AdRequest.Builder().build();
+        mBuilder = new AdRequest.Builder();
+        mBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
     }
 
     AdRequest getAdRequest() {
+        if(mAdRequest == null) {
+            mAdRequest = mBuilder.build();
+        }
         return mAdRequest;
     }
 
@@ -35,4 +40,8 @@ abstract class AbstractAdMob extends AdListener {
     }
 
     public abstract void loadAd();
+
+    public void addTestDevice(String device) {
+        mBuilder.addTestDevice(device);
+    }
 }
