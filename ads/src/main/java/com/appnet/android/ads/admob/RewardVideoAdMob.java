@@ -66,4 +66,9 @@ public class RewardVideoAdMob extends AbstractAdMob implements RewardedVideoAdLi
             mOnAdLoadListener.onAdFailed();
         }
     }
+
+    @Override
+    public void onRewardedVideoCompleted() {
+
+    }
 }
