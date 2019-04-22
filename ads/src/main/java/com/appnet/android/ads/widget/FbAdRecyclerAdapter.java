@@ -244,10 +244,10 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
                 //      mViewHolder.TvNativeAdBodySub.setText(ad.getAdBody());
                 //  }
 
-
+                NativeAdLayout nativeAdLayout = (NativeAdLayout) itemView;
                 // Add the AdChoices icon
                 ViewAdChoicesContainer.removeAllViews();
-                AdOptionsView adChoicesView = new  AdOptionsView(context, ad, (NativeAdLayout) itemView);
+                AdOptionsView adChoicesView = new  AdOptionsView(context, ad, nativeAdLayout);
                 ViewAdChoicesContainer.addView(adChoicesView);
                 ad.registerViewForInteraction(itemView, MvNativeAdMedia, ImvNativeAdIcon);
                 if(mIsActionVisible) {
