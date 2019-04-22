@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.facebook.ads.NativeAdLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/native_ad_unit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -131,4 +131,4 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/native_ad_call_to_action_text"/>
     </LinearLayout>
-</LinearLayout>
+</com.facebook.ads.NativeAdLayout>
