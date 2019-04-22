@@ -98,10 +98,8 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_FB_AD) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            NativeAdLayout nativeAdLayout = (NativeAdLayout)inflater.inflate(R.layout.layout_fb_ad_container, parent, false);
-            View view = inflater.inflate(R.layout.fb_native_ad, nativeAdLayout, false);
-            nativeAdLayout.addView(view);
-            return new FbAdRecyclerViewHolder(nativeAdLayout);
+            NativeAdLayout view = (NativeAdLayout)inflater.inflate(R.layout.fb_native_ad, parent, false);
+            return new FbAdRecyclerViewHolder(view);
         }
         return onCreateItemViewHolder(parent, viewType);
     }
@@ -203,7 +201,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         private TextView TvNativeAdSocialContext;
         private TextView TvNativeAdBody;
        //private TextView TvNativeAdBodySub;
-        private NativeAdLayout ViewNativeAdActionContainer;
+        private ViewGroup ViewNativeAdActionContainer;
         private Button BtnNativeAdCallToAction;
         private ViewGroup ViewAdChoicesContainer;
 
@@ -249,7 +247,7 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
                 // Add the AdChoices icon
                 ViewAdChoicesContainer.removeAllViews();
-                AdOptionsView adChoicesView = new  AdOptionsView(context, ad, ViewNativeAdActionContainer);
+                AdOptionsView adChoicesView = new  AdOptionsView(context, ad, (NativeAdLayout) itemView);
                 ViewAdChoicesContainer.addView(adChoicesView);
                 ad.registerViewForInteraction(itemView, MvNativeAdMedia, ImvNativeAdIcon);
                 if(mIsActionVisible) {
