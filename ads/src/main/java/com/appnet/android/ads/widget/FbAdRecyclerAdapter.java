@@ -207,17 +207,17 @@ public abstract class FbAdRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
         private boolean mIsActionVisible = false;
 
-        FbAdRecyclerViewHolder(View view) {
+        FbAdRecyclerViewHolder(NativeAdLayout view) {
             super(view);
             init(view, false);
         }
 
-        FbAdRecyclerViewHolder(View view, boolean isActionVisible) {
+        FbAdRecyclerViewHolder(NativeAdLayout view, boolean isActionVisible) {
             super(view);
             init(view, isActionVisible);
         }
 
-        private void init(View view, boolean isActionVisible) {
+        private void init(NativeAdLayout view, boolean isActionVisible) {
             mIsActionVisible = isActionVisible;
             ImvNativeAdIcon = itemView.findViewById(R.id.native_ad_icon);
             TvNativeAdTitle = itemView.findViewById(R.id.native_ad_title);

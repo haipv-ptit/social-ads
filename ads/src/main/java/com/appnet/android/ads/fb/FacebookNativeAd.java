@@ -1,7 +1,6 @@
 package com.appnet.android.ads.fb;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,9 +24,8 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     private String mUnitId;
     private WeakReference<Context> mContext;
     private NativeAd mNativeAd;
-    private ViewGroup mAdView;
+    private NativeAdLayout mAdView;
     private FbAdViewHolder mViewHolder;
-    private NativeAdLayout mNativeAdLayout;
 
     private boolean mIsMedia = false;
     private boolean mIsActionContainer = false;
@@ -35,18 +33,15 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     private int mRetry;
     private OnAdLoadListener mOnAdLoadListener;
 
-    private FacebookNativeAd(Context context, NativeAdLayout nativeAdLayout, String unitId) {
+    private FacebookNativeAd(Context context, String unitId) {
         mUnitId = unitId;
         mRetry = 0;
-        mNativeAdLayout = nativeAdLayout;
         mContext = new WeakReference<>(context);
         initFan();
     }
 
     private void initFan() {
-        LayoutInflater inflater = LayoutInflater.from(mContext.get());
-        mAdView = (ViewGroup) inflater.inflate(R.layout.fb_native_ad, mNativeAdLayout, false);
-        mNativeAdLayout.addView(mAdView);
+        mAdView = (NativeAdLayout) View.inflate(mContext.get(), R.layout.fb_native_ad, null);
         mViewHolder = new FbAdViewHolder();
         mViewHolder.ImvNativeAdIcon = mAdView.findViewById(R.id.native_ad_icon);
         mViewHolder.TvNativeAdTitle = mAdView.findViewById(R.id.native_ad_title);
@@ -138,7 +133,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
 
         // Add the AdChoices icon
         LinearLayout adChoicesContainer = mAdView.findViewById(R.id.ad_choices_container);
-        AdOptionsView adChoicesView = new AdOptionsView(mContext.get(), mNativeAd, mNativeAdLayout);
+        AdOptionsView adChoicesView = new AdOptionsView(mContext.get(), mNativeAd, mAdView);
         adChoicesContainer.addView(adChoicesView);
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
@@ -166,7 +161,6 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     public static class Builder {
         private final Context context;
         private final String unitId;
-        private final NativeAdLayout nativeAdLayout;
 
         private boolean adMedia = false;
         private boolean adActionContainer = false;
@@ -174,10 +168,9 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
 
         private ViewGroup mAdViewContainer;
 
-        public Builder(Context context, NativeAdLayout nativeAdLayout, String unitId) {
+        public Builder(Context context, String unitId) {
             this.context = context;
             this.unitId = unitId;
-            this.nativeAdLayout = nativeAdLayout;
         }
 
         public Builder enableMedia(boolean value) {
@@ -201,7 +194,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         }
 
         public FacebookNativeAd build() {
-            FacebookNativeAd adView = new FacebookNativeAd(context, nativeAdLayout, unitId);
+            FacebookNativeAd adView = new FacebookNativeAd(context, unitId);
             adView.mIsMedia = adMedia;
             adView.mIsActionContainer = adActionContainer;
             adView.mOnAdLoadListener = mOnAdLoadListener;
