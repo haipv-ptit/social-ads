@@ -17,7 +17,7 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
 
-        <com.facebook.ads.MediaView
+        <ImageView
             android:id="@+id/native_ad_icon"
             android:layout_width="@dimen/native_ad_icon_size"
             android:layout_height="@dimen/native_ad_icon_size"
@@ -72,7 +72,7 @@
             android:orientation="horizontal" />
     </LinearLayout>
 
-    <com.facebook.ads.MediaView
+    <ImageView
         android:id="@+id/native_ad_media"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/native_ad_media_height"
@@ -131,6 +131,7 @@
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:textColor="@android:color/white"
+            android:visibility="gone"
             android:textSize="@dimen/native_ad_call_to_action_text" />
     </LinearLayout>
 </LinearLayout>
