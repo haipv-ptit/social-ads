@@ -19,6 +19,8 @@ import com.facebook.ads.NativeAdLayout;
 import com.facebook.ads.NativeAdListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FacebookNativeAd extends AbstractAdListener implements NativeAdListener {
     private String mUnitId;
@@ -139,7 +141,13 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
         }
-        mNativeAd.registerViewForInteraction(mViewHolder.ViewNativeAdRoot, mViewHolder.MvNativeAdMedia, mViewHolder.ImvNativeAdIcon);
+        List<View> clickableViews = new ArrayList<>();
+        clickableViews.add(mViewHolder.TvNativeAdTitle);
+        clickableViews.add(mViewHolder.TvNativeAdBody);
+        clickableViews.add(mViewHolder.TvNativeAdBodySub);
+        clickableViews.add(mViewHolder.BtnNativeAdCallToAction);
+        clickableViews.add(mViewHolder.TvNativeAdSocialContext);
+        mNativeAd.registerViewForInteraction(mAdView, mViewHolder.MvNativeAdMedia, mViewHolder.ImvNativeAdIcon, clickableViews);
     }
 
     @Override
