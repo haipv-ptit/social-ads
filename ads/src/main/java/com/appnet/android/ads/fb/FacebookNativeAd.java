@@ -19,6 +19,8 @@ import com.facebook.ads.NativeAdLayout;
 import com.facebook.ads.NativeAdListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FacebookNativeAd extends AbstractAdListener implements NativeAdListener {
     private String mUnitId;
@@ -43,6 +45,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     private void initFan() {
         mAdView = (NativeAdLayout) View.inflate(mContext.get(), R.layout.fb_native_ad, null);
         mViewHolder = new FbAdViewHolder();
+        mViewHolder.ViewNativeAdRoot = mAdView.findViewById(R.id.view_native_ad_root);
         mViewHolder.ImvNativeAdIcon = mAdView.findViewById(R.id.native_ad_icon);
         mViewHolder.TvNativeAdTitle = mAdView.findViewById(R.id.native_ad_title);
         mViewHolder.MvNativeAdMedia = mAdView.findViewById(R.id.native_ad_media);
@@ -138,7 +141,10 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
         }
-        mNativeAd.registerViewForInteraction(mAdView,  mViewHolder.MvNativeAdMedia, mViewHolder.ImvNativeAdIcon);
+        List<View> clickableViews = new ArrayList<>();
+        clickableViews.add(mViewHolder.ViewNativeAdRoot);
+        clickableViews.add( mViewHolder.ImvNativeAdIcon);
+        mNativeAd.registerViewForInteraction(mAdView, mViewHolder.MvNativeAdMedia, clickableViews);
     }
 
     @Override
@@ -147,6 +153,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     }
 
     private static class FbAdViewHolder {
+        ViewGroup ViewNativeAdRoot;
         MediaView ImvNativeAdIcon;
         TextView TvNativeAdTitle;
         TextView TvNativeAdSponsored;

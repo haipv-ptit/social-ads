@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/native_ad_unit"
+        android:id="@+id/view_native_ad_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
