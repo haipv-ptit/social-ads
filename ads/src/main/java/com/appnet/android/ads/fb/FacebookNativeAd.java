@@ -27,13 +27,24 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
     private WeakReference<Context> mContext;
     private NativeAd mNativeAd;
     private NativeAdLayout mAdView;
-    private FbAdViewHolder mViewHolder;
 
     private boolean mIsMedia = false;
     private boolean mIsActionContainer = false;
 
     private int mRetry;
     private OnAdLoadListener mOnAdLoadListener;
+
+    private ViewGroup mViewNativeAdRoot;
+    private MediaView mImvNativeAdIcon;
+    private TextView mTvNativeAdTitle;
+    private TextView mTvNativeAdSponsored;
+    private MediaView mMvNativeAdMedia;
+    private TextView mTvNativeAdSocialContext;
+    private TextView mTvNativeAdBody;
+    private TextView mTvNativeAdBodySub;
+    private View mViewNativeAdActionContainer;
+    private Button mBtnNativeAdCallToAction;
+    private LinearLayout mAdChoicesContainer;
 
     private FacebookNativeAd(Context context, String unitId) {
         mUnitId = unitId;
@@ -44,35 +55,34 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
 
     private void initFan() {
         mAdView = (NativeAdLayout) View.inflate(mContext.get(), R.layout.fb_native_ad, null);
-        mViewHolder = new FbAdViewHolder();
-        mViewHolder.ViewNativeAdRoot = mAdView.findViewById(R.id.view_native_ad_root);
-        mViewHolder.ImvNativeAdIcon = mAdView.findViewById(R.id.native_ad_icon);
-        mViewHolder.TvNativeAdTitle = mAdView.findViewById(R.id.native_ad_title);
-        mViewHolder.MvNativeAdMedia = mAdView.findViewById(R.id.native_ad_media);
-        mViewHolder.TvNativeAdSocialContext = mAdView.findViewById(R.id.native_ad_social_context);
-        mViewHolder.TvNativeAdBody = mAdView.findViewById(R.id.native_ad_body);
-        mViewHolder.TvNativeAdBodySub = mAdView.findViewById(R.id.native_ad_body_sub);
-        mViewHolder.BtnNativeAdCallToAction = mAdView.findViewById(R.id.native_ad_call_to_action);
-        mViewHolder.ViewNativeAdActionContainer = mAdView.findViewById(R.id.native_ad_action_container);
-        mViewHolder.TvNativeAdSponsored = mAdView.findViewById(R.id.sponsored_label);
+        mViewNativeAdRoot = mAdView.findViewById(R.id.view_native_ad_root);
+        mImvNativeAdIcon = mAdView.findViewById(R.id.native_ad_icon);
+        mTvNativeAdTitle = mAdView.findViewById(R.id.native_ad_title);
+        mMvNativeAdMedia = mAdView.findViewById(R.id.native_ad_media);
+        mTvNativeAdSocialContext = mAdView.findViewById(R.id.native_ad_social_context);
+        mTvNativeAdBody = mAdView.findViewById(R.id.native_ad_body);
+        mTvNativeAdBodySub = mAdView.findViewById(R.id.native_ad_body_sub);
+        mBtnNativeAdCallToAction = mAdView.findViewById(R.id.native_ad_call_to_action);
+        mViewNativeAdActionContainer = mAdView.findViewById(R.id.native_ad_action_container);
+        mTvNativeAdSponsored = mAdView.findViewById(R.id.sponsored_label);
+        mAdChoicesContainer = mAdView.findViewById(R.id.ad_choices_container);
         mNativeAd = new NativeAd(mContext.get(), mUnitId);
         mNativeAd.setAdListener(this);
     }
 
     private void checkViewConfig() {
         if (mIsMedia) {
-            mViewHolder.MvNativeAdMedia.setVisibility(View.VISIBLE);
+            mMvNativeAdMedia.setVisibility(View.VISIBLE);
         } else {
-            mViewHolder.MvNativeAdMedia.setVisibility(View.GONE);
+            mMvNativeAdMedia.setVisibility(View.GONE);
         }
         if (mIsActionContainer) {
-            mViewHolder.TvNativeAdBodySub.setVisibility(View.GONE);
-            mViewHolder.TvNativeAdSponsored.setVisibility(View.VISIBLE);
-            mViewHolder.ViewNativeAdActionContainer.setVisibility(View.VISIBLE);
+            mTvNativeAdBodySub.setVisibility(View.GONE);
+            mViewNativeAdActionContainer.setVisibility(View.VISIBLE);
         } else {
-            mViewHolder.TvNativeAdBodySub.setVisibility(View.VISIBLE);
-            mViewHolder.ViewNativeAdActionContainer.setVisibility(View.GONE);
-            mViewHolder.TvNativeAdSponsored.setVisibility(View.GONE);
+            mTvNativeAdBodySub.setVisibility(View.VISIBLE);
+            mViewNativeAdActionContainer.setVisibility(View.GONE);
+            mTvNativeAdSponsored.setVisibility(View.GONE);
         }
     }
 
@@ -125,47 +135,36 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         mRetry = 0;
         mNativeAd.unregisterView();
         // Set the Text.
-        mViewHolder.TvNativeAdTitle.setText(mNativeAd.getAdvertiserName());
+        mTvNativeAdTitle.setText(mNativeAd.getAdvertiserName());
         if (mIsActionContainer) {
-            mViewHolder.TvNativeAdSocialContext.setText(mNativeAd.getAdSocialContext());
-            mViewHolder.TvNativeAdBody.setText(mNativeAd.getAdBodyText());
-            mViewHolder.BtnNativeAdCallToAction.setText(mNativeAd.getAdCallToAction());
+            mTvNativeAdSocialContext.setText(mNativeAd.getAdSocialContext());
+            mTvNativeAdBody.setText(mNativeAd.getAdBodyText());
+            mBtnNativeAdCallToAction.setText(mNativeAd.getAdCallToAction());
         } else {
-            mViewHolder.TvNativeAdBodySub.setText(mNativeAd.getAdBodyText());
+            mTvNativeAdBodySub.setText(mNativeAd.getAdBodyText());
         }
 
         // Add the AdChoices icon
-        LinearLayout adChoicesContainer = mAdView.findViewById(R.id.ad_choices_container);
+
         AdOptionsView adChoicesView = new AdOptionsView(mContext.get(), mNativeAd, mAdView);
-        adChoicesContainer.addView(adChoicesView);
+        mAdChoicesContainer.removeAllViews();
+        mAdChoicesContainer.addView(adChoicesView, 0);
+        //
+        List<View> clickableViews = new ArrayList<>();
+        clickableViews.add(mTvNativeAdTitle);
+        clickableViews.add(mTvNativeAdBody);
+        clickableViews.add(mTvNativeAdBodySub);
+        clickableViews.add(mBtnNativeAdCallToAction);
+        clickableViews.add(mTvNativeAdSocialContext);
+        mNativeAd.registerViewForInteraction(mAdView, mMvNativeAdMedia, mImvNativeAdIcon, clickableViews);
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
         }
-        List<View> clickableViews = new ArrayList<>();
-        clickableViews.add(mViewHolder.TvNativeAdTitle);
-        clickableViews.add(mViewHolder.TvNativeAdBody);
-        clickableViews.add(mViewHolder.TvNativeAdBodySub);
-        clickableViews.add(mViewHolder.BtnNativeAdCallToAction);
-        clickableViews.add(mViewHolder.TvNativeAdSocialContext);
-        mNativeAd.registerViewForInteraction(mAdView, mViewHolder.MvNativeAdMedia, mViewHolder.ImvNativeAdIcon, clickableViews);
     }
 
     @Override
     public void onMediaDownloaded(Ad ad) {
 
-    }
-
-    private static class FbAdViewHolder {
-        ViewGroup ViewNativeAdRoot;
-        MediaView ImvNativeAdIcon;
-        TextView TvNativeAdTitle;
-        TextView TvNativeAdSponsored;
-        MediaView MvNativeAdMedia;
-        TextView TvNativeAdSocialContext;
-        TextView TvNativeAdBody;
-        TextView TvNativeAdBodySub;
-        View ViewNativeAdActionContainer;
-        Button BtnNativeAdCallToAction;
     }
 
     public static class Builder {
