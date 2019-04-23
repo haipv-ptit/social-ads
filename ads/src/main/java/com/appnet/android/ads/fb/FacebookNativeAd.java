@@ -153,7 +153,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         List<View> clickableViews = new ArrayList<>();
         clickableViews.add(mTvNativeAdTitle);
         clickableViews.add(mTvNativeAdBodySub);
-        mNativeAd.registerViewForInteraction(mAdView, mImvNativeAdIcon, clickableViews);
+        mNativeAd.registerViewForInteraction(mAdView, mMvNativeAdMedia, mImvNativeAdIcon, clickableViews);
         if (mOnAdLoadListener != null) {
             mOnAdLoadListener.onAdLoaded();
         }
@@ -168,7 +168,7 @@ public class FacebookNativeAd extends AbstractAdListener implements NativeAdList
         private final Context context;
         private final String unitId;
 
-        private boolean adMedia = false;
+        private boolean adMedia = true;
         private boolean adActionContainer = false;
         private OnAdLoadListener mOnAdLoadListener;
 
